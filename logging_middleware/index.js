@@ -50,23 +50,34 @@ function assertValidPayload(stack, level, packageName, message) {
   }
 }
 
+function normalizeMessage(message) {
+  const cleaned = String(message).replace(/\s+/g, " ").trim();
+  if (cleaned.length <= 48) return cleaned;
+  return `${cleaned.slice(0, 45)}...`;
+}
+
 async function Log(stack, level, packageName, message) {
-  assertValidPayload(stack, level, packageName, message);
+  const normalizedMessage = normalizeMessage(message);
+  assertValidPayload(stack, level, packageName, normalizedMessage);
 
   const payload = {
     stack,
     level,
     package: packageName,
-    message,
+    message: normalizedMessage,
   };
 
   const headers = {
     "Content-Type": "application/json",
   };
 
-  const bearerToken = process.env.LOG_API_TOKEN;
+  const bearerToken = process.env.LOG_API_TOKEN || process.env.ACCESS_TOKEN;
   if (bearerToken) {
     headers.Authorization = `Bearer ${bearerToken}`;
+  } else {
+    throw new Error(
+      "Missing bearer token. Set LOG_API_TOKEN or ACCESS_TOKEN environment variable."
+    );
   }
 
   const response = await fetch(LOG_ENDPOINT, {
