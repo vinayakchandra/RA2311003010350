@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/vinayakchandra/RA2311003010350/issues"
   },
-  "homepage": "https://github.com/vinayakchandra/RA2311003010350#readme"
+  "homepage": "https://github.com/vinayakchandra/RA2311003010350#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
 }
